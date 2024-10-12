@@ -1,0 +1,769 @@
+\documentclass[11pt,addpoints,answers]{exam}
+
+\input{preamble}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Commands showing / hiding solutions     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% To HIDE SOLUTIONS (to post at the website for students), set this value to 0: \def\issoln{0}
+\def\issoln{0}
+% Some commands to allow solutions to be embedded in the assignment file.
+\ifcsname issoln\endcsname \else \def\issoln{0} \fi
+% Default to an empty solutions environ.
+\NewEnviron{soln}{}{}
+% Default to an empty qauthor environ.
+\NewEnviron{qauthor}{}{}
+% Deafault to an empty learning objective environ.
+\NewEnviron{qlearningobjective}{}
+% Default to visible (but empty) solution box.
+\newtcolorbox[]{studentsolution}[1][]{%
+    breakable,
+    enhanced,
+    colback=white,
+    title=Solution,
+    #1
+}
+
+\if\issoln 0
+% Otherwise, include solutions as below.
+\RenewEnviron{soln}{
+    \leavevmode\color{red}\ignorespaces
+    \textbf{Solution} \BODY
+}{}
+
+% Learning objective environment
+\RenewEnviron{qlearningobjective}{
+\leavevmode\color{blue}\ignorespaces \textbf{Learning Objective } \BODY }{}
+\fi
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
+
+\if\issoln 1
+% Otherwise, include solutions as below.
+\RenewEnviron{solution}{}
+\fi
+
+
+% Default to an empty tags environ.
+\NewEnviron{tags}{}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Commands for customizing the assignment %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\courseNum}{CS 678}
+\newcommand{\courseName}{Advanced Natural Language Processing}
+\newcommand{\courseSem}{Fall 2024}
+\newcommand{\courseUrl}{\url{https://nlp.cs.gmu.edu/course/cs678-fall24/}}
+\newcommand{\hwNum}{Homework 2}
+\newcommand{\hwTopic}{Practices of Large Language Models}
+\newcommand{\hwName}{\hwNum: \hwTopic}
+\newcommand{\outDate}{Friday, September 20, 2024}
+\newcommand{\dueDate}{Friday, October 11, 2024}
+%\newcommand{\taNames}{Sana, Catherine, Joseph, Zachary, Brendon}
+
+
+\newtcolorbox[]{your_solution}[1][]{%
+    % breakable,
+    enhanced,
+    nobeforeafter,
+    colback=white,
+    title=Your Answer,
+    sidebyside align=top,
+    box align=top,
+    #1
+}
+
+
+\lhead{\hwName}
+\rhead{\courseNum}
+\cfoot{\thepage{} of \numpages{}}
+
+\title{\textsc{\hwName}} % Title
+
+
+\author{}
+
+\date{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Useful commands for typesetting the questions %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand \expect {\mathbb{E}}
+\newcommand \mle [1]{{\hat #1}^{\rm MLE}}
+\newcommand \map [1]{{\hat #1}^{\rm MAP}}
+\newcommand \argmax {\operatorname*{argmax}}
+\newcommand \argmin {\operatorname*{argmin}}
+\newcommand \code [1]{{\tt #1}}
+\newcommand \datacount [1]{\#\{#1\}}
+\newcommand \ind [1]{\mathbb{I}\{#1\}}
+
+\newcommand{\blackcircle}{\tikz\draw[black,fill=black] (0,0) circle (1ex);}
+\renewcommand{\circle}{\tikz\draw[black] (0,0) circle (1ex);}
+
+\newcommand{\pts}[1]{\textbf{[#1 pts]}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document configuration %
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Don't display a date in the title and remove the white space
+\predate{}
+\postdate{}
+\date{}
+
+% Don't display an author and remove the white space
+%\preauthor{}
+%\postauthor{}
+
+%%%%%%%%%%%%%%%%%%
+% Begin Document %
+%%%%%%%%%%%%%%%%%% 
+
+
+\begin{document}
+
+\section*{}
+\begin{center}
+  \textsc{\LARGE \hwNum} \\[1em]
+  \textsc{\LARGE \hwTopic\footnote{Compiled on \today{} at \currenttime{}}} \\
+  \vspace{1em}
+  \textsc{\large \courseNum{} \courseName{} (\courseSem)} \\
+  %\vspace{0.25em}
+  \courseUrl\\
+  \vspace{1em}
+  OUT: \outDate \\
+  %\vspace{0.5em}
+  DUE: \dueDate \\[2em]
+  %TAs: \taNames
+  
+  Your name: \underline{Priya Dharshini Allapuram}\\[2em]
+  Your GID: \underline{G01457911}\\[2em]
+\end{center}
+
+  \textbf{IMPORTANT:} The homework is accompanied by a Python notebook and a GitHub code repository. 
+  \textbf{For Part 1}, after copying this notebook to your Google Drive or One Drive, please paste a link to it below. To get a publicly accessible link, hit the Share button at the top right, then click ``Get shareable link" and copy over the result. 
+  \textbf{For Part 2}, fork the public code repository to your own space and share a link to your code repository in the link below.
+  When you are done, submit your completed .pdf report to Gradescope.\\
+  \textbf{If you fail to do this, you will receive no credit for this homework!}\\
+
+\begin{center}
+  \textbf{Note 1: You will only need to run lightweight code for this assignment, which can be done locally on your machine (i.e., ORC GPUs are not required).}\\
+  \textbf{Note 2: Both parts require using OpenAI API. Please make sure to REMOVE your private key from your notebook and code repository before submission.}\\[1em]
+  Your Notebook solution for Part 1: \underline{\hspace{5.2cm}}\\[1em]
+  Your GitHub code repository for Part 2: \underline{\hspace{5.2cm}}\\[2em]
+\end{center}
+
+Graded Questions: 100 points\\
+Bonus Questions: 20 points\\
+Total Points Available: 120/100 \\
+
+Additional Notes:
+  \begin{itemize}
+      \item Upload the whole report PDF (including all pages, also if you're scanning it).
+      \item All questions only require written answers in this PDF. For coding problems, you will have to fill out all code blocks that say \texttt{YOUR CODE HERE} in your notebook or per instruction.
+      \item For text-based answers, you should replace the text that says "Write your answer here..." with your actual answer.
+  \end{itemize}      
+
+
+\clearpage\section*{Part 1: Introduction to Prompts [50 pts]}
+
+This section uses the paired Python notebook. Below, provide the answers to the questions as generated by the completed code blocks in the similarly marked questions. 
+Please also make sure to set up the Python environment (Task 0) before you run the notebook.
+
+% \bigskip
+
+\subsection*{Task 1: Story Generation with Different Sampling Strategies} 
+
+\begin{questions}
+    \question[5] Can you use the ChatCompletion function to generate a story about an Indian student studying abroad (e.g., at George Mason University)? Please use the default setting and generate only one story.
+    
+    \begin{tcolorbox}[fit,height=18cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    Give the output of your gpt-4o-mini here.
+    Response:  **Title: Across Cultures: Mitali’s Journey at George Mason University**
+
+Mitali Sharma had always dreamt of studying in the United States. Growing up in Pune, India, she spent countless nights poring over images of university campuses and reading success stories of Indian students who had carved out vibrant lives abroad. When she received her acceptance letter from George Mason University, she felt as if part of her dreams had come true. It was the beginning of her adventure in a new land.
+
+Mitali arrived in Fairfax, Virginia, in late August, just as the leaves were beginning to change color. The campus was bustling, vibrant with the diversity of its student body. As a young woman hailing from a middle-class background in India, she embraced the thrill that came with a new environment. However, she soon found herself navigating the complexities of a different culture.
+
+Her first challenge was the language barrier. Although Mitali was fluent in English, the American accent and colloquialisms often left her confused. In her first week of classes, she sat nervously during her sociology lecture, catching snippets of conversation that seemed to fly by her. It was in that moment that Mitali experienced the piercing pang of homesickness. The familiarity of her hometown, the warmth of her family, and the spicy flavors of her mother’s cooking suddenly felt impossibly distant.
+
+To combat her loneliness, Mitali joined the Indian Student Association and participated in several cultural events that showcased her heritage. These gatherings became her safe haven, a space where she connected with fellow Indian students who shared similar experiences. She met Raj, a computer science major from Delhi, who quickly became a close friend. They spent hours discussing their goals, the challenges they faced, and the excitement of being far from home. Raj encouraged her to become more engaged on campus, suggesting she attend various workshops and join study groups.
+
+Taking his advice, Mitali signed up for a writing workshop to improve her academic skills. While the course was challenging, the supportive feedback from her peers and instructor helped her significantly. Over time, her confidence blossomed, and she began to express herself more freely, both in writing and in conversation.
+
+One of the biggest tests of her resilience came during her first exam period. An unexpected family emergency required her to return to India for a week. Reluctantly, she left only to face the pressure of catching up on missed assignments and studying for a critical midterm upon her return. With late nights and endless cups of chai, she managed to pull through. Mitali learned the importance of perseverance and adaptation, discovering that she could handle more than she previously thought.
+
+As the semester wore on, she also encountered the cultural nuances of her new environment. One afternoon, while working on a group project in a local café, Mitali felt excluded as her peers joked and chatted casually, seemingly forgetting to ask for her input. It was in moments like these that she grappled with feelings of inadequacy and self-doubt. However, this experience motivated her to stand up for herself in group settings. Mitali began to voice her opinions confidently and even suggested integrating cultural perspectives into their projects, which contributed to richer discussions and better outcomes.
+
+With each passing week, Mitali grew more assertive and self-assured. She immersed herself in her studies, joined a dance class that introduced her to American styles of movement, and even began to make friends outside of the Indian community. Her roommate, Sarah, a cheerful psychology major from Texas, invited her to explore the local music scene. Through Sarah, Mitali experienced a slice of American life—barbecue cookouts, music festivals, and spontaneous trips to the National Mall.
+
+By the time graduation approached, Mitali had transformed in more ways than she could count. She had not only excelled in her academics, but she also developed skills that allowed her to navigate the complexities of cultural adaptation. The shy girl who once struggled to speak up in class had become a confident leader in her community, organizing events and workshops for other international students.
+
+Finally, on a sprawling spring day, as Mitali walked across the graduation stage, she felt overwhelming emotions swell within her. For her, that moment represented more than academic achievement—it signified resilience, growth, and the beauty of cross-cultural exchange. With her degree in hand, she understood that while she may have left her homeland, she would always carry a part of India with her, woven into the fabric of her newfound identity.
+
+As Mitali stepped into a new chapter, she was no longer just the girl from Pune; she had grown into a global citizen, ready to embrace whatever challenges and opportunities life would bring her next. Reflecting on her journey, she smiled, knowing the lessons learned at George Mason University would guide her forever.
+    \end{tcolorbox}
+
+    \question[5] Now, can you do the same but try to get 2 generation outputs with ``top\_p" set to be 1?
+    
+    \begin{tcolorbox}[fit,height=22cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    The call returns 2 responses:
+
+*Response 0*:  Aarya Patel arrived at George Mason University with a heart full of ambition and a suitcase packed with her dreams. Coming from the vibrant city of Pune, India, where the air was rich with the scents of spices and the laughter of friends, she found herself staring at the wide, grassy lawns and brick buildings of the Fairfax campus—so different yet fascinating.
+
+At first, the excitement of being in a new country engulfed Aarya. She had always excelled in her studies back in India, and she was determined to make the most of her business administration degree. The initial weeks were a whirlwind of orientation sessions, making new friends from all over the world, and learning how to navigate the campus. She reveled in late-night study sessions at the library, coffee dates at the local café, and exploring the historical sites of Washington, D.C. Each new experience painted her life with vibrant colors, and she felt on top of the world.
+
+However, as the novelty wore off, Aarya began to confront the challenges of being an international student. The differences in academic rigor were one of the first hurdles. In India, Aarya had been used to a more traditionally structured learning environment, but the American education system emphasized participation, discussions, and critical thinking. At first, she hesitated to speak up in class, fearing her accent might cause misunderstandings or that her ideas might not be as valued. Consequently, she felt like an outsider during group projects, often struggling to make friends among her peers who were accustomed to collaborating seamlessly.
+
+Homesickness crept in, too. The vibrant colors of Diwali celebrations back home clashed with the quiet solitude of her dorm during the holidays. Aarya often found herself recalling family gatherings, the aroma of her mother's cooking, and the warmth of her friends' embraces. She would spend hours on video calls, trying to bridge the distance while her heart ached for home.
+
+Yet it was through these struggles that Aarya began her personal growth. Realizing she needed to adapt, she sought help from her professors and joined various clubs to meet more people. She joined the Indian Student Association, where she found a community that understood her feelings and shared her love for the rich cultural heritage of India. Participating in cultural events allowed her to express herself and build connections, which fortified her confidence.
+
+In class, she pushed past her fears one small step at a time. During a group presentation, she mustered the courage to share her perspective, and to her surprise, her classmates were receptive and appreciative. This moment ignited a spark within her; she started to see her unique background as an asset rather than a liability. Bit by bit, she transformed her hesitance into engagement, often contributing insights from her diverse upbringing that enriched discussions.
+
+Aarya's journey wasn’t just about overcoming challenges but also discovering her passion for entrepreneurship. Inspired by American startups and innovations, she began to explore her own business ideas. During her sophomore year, she entered a campus startup competition with a plan for an eco-friendly packaging company that would cater to both Indian and American markets. The feedback from the judges and her peers boosted her self-esteem and provided a newfound goal to work toward.
+
+Over time, Aarya embraced her dual identity as a student, blending her Indian roots with her American experiences. She started a blog where she chronicled her journey, sharing tips for other international students navigating cultural adjustments. The blog quickly gained traction, creating a community for others who felt the same sense of displacement. It transformed into a source of solace and empowerment, leading to collaborations with local businesses and appearances at student conferences.
+
+By the time Aarya graduated, she had not only excelled academically but had also evolved personally and socially. George Mason became her second home, a place where she forged friendships and discovered her potential. Aarya left the campus with a diploma in hand, but more importantly, she carried with her a toolkit of resilience and adaptability.
+
+As she stood at graduation, listening to the speeches resonating with hope and ambition, Aarya couldn’t help but reflect on her journey. She had crossed oceans, faced her fears, and emerged stronger, ready to embrace whatever challenges awaited her in the future. The world was vast and full of possibilities, and Aarya Patel was ready to conquer it, one step at a time.
+
+\pagebreak
+
+*Response 1*:  **Title: Bridging Cultures: A Journey at George Mason University**
+
+In the vibrant heart of Fairfax, Virginia, where the sprawling campus of George Mason University stood as a testament to diversity and innovation, Arjun Patel arrived from his hometown of Ahmedabad, India. Armed with ambition and a suitcase full of dreams, he was ready to embark on a journey that would challenge his limits and redefine his understanding of the world.
+
+At first glance, GMU was everything Arjun had hoped for. The modern architecture, the sprawling green lawns, and the bustle of students from every walk of life filled him with excitement. However, the first few weeks presented daunting challenges. The absence of familiar faces in a sea of new ones made him feel isolated. His roommate, a local student who was deeply immersed in American culture, struggled to relate to Arjun's stories of spicy street food and cricket matches back home.
+
+Classes were a whirlwind of information. Arjun was majoring in Computer Science, a field he was passionate about but felt particularly intimidating in this new environment. The professors were dynamic and engaging, but the fast-paced dialogues often left him struggling to keep up. Although he had excelled in his studies in India, he found that the emphasis on discussions and critical thinking in American education was a world apart from the rote memorization he was used to.
+
+Feeling overwhelmed, Arjun sought solace in the campus library, a vast and quiet space where he could immerse himself in his studies without the noise of the world. He discovered that he had a knack for programming, solving complex problems with a determination that surprised even himself. Late nights spent debugging code transformed into small victories, and he began to forge connections with classmates who admired his resilience and work ethic.
+
+His turning point came during a group project in one of his advanced classes. Pagoda, an outgoing student from Brazil, suggested they meet to brainstorm ideas. As they collaborated, Arjun could no longer hold back his cultural anecdotes and culinary traditions. He shared stories of his grandmother's recipes, the vibrancy of Diwali celebrations, and his aspirations of using technology for social good back in India. To his surprise, his team members were genuinely intrigued. They shared their stories too, revealing the beauty in their cultures.
+
+Through this collaboration, Arjun not only honed his technical skills but also learned the art of communication and teamwork. As the project progressed, they won the admiration of their professor, who remarked on their unique blend of perspectives and creativity. Arjun realized that his identity as an Indian student was not a hindrance but rather an asset that enriched discussions and ideas.
+
+Despite professional growth, Arjun faced personal challenges too. Missing home weighed heavily on his heart, leading to bouts of homesickness. To cope, he began attending events organized by the Indian Student Association on campus. At these gatherings, he found comfort in the familiar aromas of samosas and the rhythm of Bollywood music. Through dances and discussions, he bonded with other international students, all navigating their own unique journeys. They became a support system, understanding the nuances of feeling out of place yet striving to find a home away from home.
+
+As the semester progressed, Arjun started volunteering at a local community center, teaching children coding. This experience profoundly impacted him. He realized how technology could transcend barriers and empower the next generation, especially in underserved communities. The joy in the children's eyes when they coded their first game filled him with purpose. In this role, he was not only a teacher but also a bridge between cultures, fostering understanding and nurturing curiosity.
+
+By the end of his first year, Arjun felt a transformation. He was no longer the timid student who walked into GMU; rather, he had grown into a confident individual ready to tackle challenges head-on. He appreciated the beauty in different perspectives and learned the importance of collaboration and empathy.
+
+Reflecting on his journey, Arjun understood that his experience at George Mason University was more than just an education. It was a harmonious blend of academic rigor and cultural exchange, shaping him into a globally minded citizen. The once daunting challenges became stepping stones to his personal growth, and the friends he made became family.
+
+As he walked across the campus on graduation day, cap and gown flapping in the breeze, Arjun realized he had not only earned a degree but had also forged a lifelong connection to both his roots and an expansive world beyond them. In him, the essence of cultures intertwined, a testament to the journey of a young Indian student finding his place in the tapestry of global society.
+----------
+    \end{tcolorbox}
+
+    
+    \question[5] How about 2 generation outputs with ``top\_p" set to be 0.5?
+    
+    \begin{tcolorbox}[fit,height=22cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    The call returns 2 responses:
+
+*Response 0*:  **Title: A Journey of Dreams**
+
+**Chapter 1: New Beginnings**
+
+Arjun Patel stepped off the plane at Dulles International Airport, his heart racing with a mix of excitement and anxiety. The sprawling campus of George Mason University awaited him, a place where he hoped to transform his dreams into reality. Hailing from a small town in Gujarat, India, Arjun had always envisioned studying abroad, and now, as he stood in the bustling airport, he felt the weight of that dream on his shoulders.
+
+As he navigated through the airport, he recalled the conversations with his family back home. His parents had sacrificed so much to provide him with this opportunity. They had instilled in him the values of hard work and perseverance, and he was determined to make them proud.
+
+**Chapter 2: Cultural Shock**
+
+The first few weeks at George Mason were a whirlwind. Arjun was in awe of the campus's size and diversity. Students from all over the world mingled, each with their own stories and backgrounds. However, he soon faced the challenges of cultural adjustment. The American education system was different from what he was used to; discussions in class were encouraged, and students were expected to voice their opinions openly.
+
+Arjun struggled initially. In his classes, he often found himself hesitating to speak up, worried that his accent would draw attention or that his ideas would be dismissed. He missed the familiarity of his professors back home, who had guided him with a gentle hand. The loneliness of being away from his family began to creep in, and he often spent evenings in his dorm room, scrolling through social media, longing for the comfort of home-cooked meals and family gatherings.
+
+**Chapter 3: Finding Community**
+
+Determined to overcome his challenges, Arjun decided to join the Indian Student Association (ISA) on campus. The first meeting was a revelation. Surrounded by fellow students who shared similar experiences, he felt a sense of belonging. They laughed about the little things that reminded them of home, shared recipes, and celebrated festivals like Diwali with fervor.
+
+Through ISA, Arjun met Priya, a spirited student from Mumbai. She encouraged him to participate in a cultural showcase where they would perform a traditional dance. Initially hesitant, Arjun agreed, realizing that stepping out of his comfort zone was essential for his growth. The rehearsals were filled with laughter and camaraderie, and he began to forge friendships that would last a lifetime.
+
+**Chapter 4: Academic Challenges**
+
+As the semester progressed, Arjun faced academic hurdles. The coursework was rigorous, and he often found himself overwhelmed. One particular assignment—a research paper—felt insurmountable. He spent countless nights in the library, poring over books and articles, struggling to articulate his thoughts in a coherent manner.
+
+One evening, as he sat at a table surrounded by stacks of books, a classmate named Sarah approached him. She noticed his frustration and offered to help. They spent hours discussing the topic, and Sarah's encouragement helped Arjun find his voice. With her guidance, he submitted a paper he was proud of, and when he received a good grade, it felt like a victory not just academically, but personally.
+
+**Chapter 5: Embracing Growth**
+
+As the months passed, Arjun began to embrace his new life. He learned to navigate the complexities of American culture while holding onto his roots. He celebrated Holi with his friends, who painted each other with vibrant colors, and they introduced him to their own traditions, creating a beautiful tapestry of cultural exchange.
+
+With each passing day, Arjun grew more confident. He started participating in class discussions, sharing his perspectives, and even found himself mentoring newer international students who faced similar challenges. He realized that his experiences, both the struggles and the triumphs, had equipped him with a unique perspective that was valuable in the classroom.
+
+**Chapter 6: A New Perspective**
+
+By the end of his first year, Arjun had transformed. He had learned to balance his academic responsibilities with social engagements, developing time management skills that would serve him well in the future. He had also grown more self-assured, understanding that his voice mattered, regardless of his accent or background.
+
+As he stood on the campus lawn one sunny afternoon, surrounded by friends, he reflected on his journey. The challenges he faced had shaped him into a more resilient individual. He was no longer just the shy boy from Gujarat; he was Arjun Patel, a global citizen, ready to take on the world.
+
+**Epilogue: Looking Ahead**
+
+With renewed determination, Arjun set his sights on the future. He dreamed of pursuing a career in technology, hoping to bridge the gap between cultures through innovation. As he prepared for his second year, he knew that the journey was just beginning. Armed with the lessons of resilience, community, and self-discovery, he was ready to embrace whatever came next.
+
+In the heart of Virginia, far from home, Arjun had found not just an education, but a family, a purpose, and a path to his dreams.
+----------
+*Response 1*:  **Title: A Journey of Growth: An Indian Student at George Mason University**
+
+Aarav Sharma stepped off the plane at Dulles International Airport, his heart racing with a mix of excitement and anxiety. He had left behind his bustling hometown of Pune, India, to pursue a Master’s degree in Computer Science at George Mason University in Virginia. The vastness of the United States was overwhelming, and he felt like a small fish in a big ocean.
+
+As he settled into his dorm room, Aarav was struck by the cultural differences. The campus was a melting pot of nationalities, with students from all over the world. The first few days were a whirlwind of orientation sessions, where he learned about academic resources, student organizations, and the importance of networking. However, he often found himself feeling isolated, struggling to connect with others. The casual conversations and jokes flew over his head, and he missed the familiarity of his friends back home.
+
+Classes began, and Aarav was both thrilled and intimidated. His professors were knowledgeable and approachable, but the coursework was rigorous. He quickly realized that the American education system encouraged participation and critical thinking, which was different from the rote learning he was accustomed to in India. In his first programming class, he hesitated to raise his hand, fearing his accent would make him difficult to understand. However, one day, after a particularly challenging assignment, he mustered the courage to ask a question. To his surprise, his professor appreciated his inquiry and encouraged him to share his perspective. That moment marked a turning point for Aarav; he began to engage more actively in class discussions.
+
+Despite his academic progress, Aarav faced challenges outside the classroom. He often felt homesick, missing the warmth of his family and the vibrant festivals of India. Diwali came and went, and while he tried to celebrate with his friends, it wasn’t the same. He longed for the festive lights, the aroma of homemade sweets, and the laughter of loved ones. To cope, he started a small cooking group with a few other international students. They gathered in the kitchen, sharing recipes and stories from their home countries. Aarav found solace in these gatherings, and slowly, he began to forge friendships that transcended cultural boundaries.
+
+As the semester progressed, Aarav became more involved on campus. He joined the Indian Student Association, where he met others who shared his experiences and struggles. Together, they organized events to celebrate Indian culture, from Holi to traditional dance performances. Aarav took on the role of a coordinator, which pushed him out of his comfort zone. He learned to manage logistics, communicate effectively, and work as part of a team. These experiences helped him build confidence and develop leadership skills.
+
+One of the most significant challenges Aarav faced was during his internship search. The pressure to secure a position was immense, and he often felt overwhelmed by the competitive landscape. He attended workshops on resume writing and interview techniques, but self-doubt crept in. One evening, after a particularly discouraging rejection, he called his mother in India. She reminded him of the importance of perseverance and encouraged him to keep trying. Inspired by her words, Aarav decided to approach his search differently. He reached out to his professors and peers for advice, attended networking events, and practiced his interview skills relentlessly.
+
+His efforts paid off when he landed an internship at a tech startup in Washington, D.C. The experience was exhilarating yet challenging. Aarav was tasked with developing a new feature for the company’s software, and he quickly realized the importance of collaboration and communication in a professional setting. He learned to navigate the complexities of teamwork, balancing his ideas with those of his colleagues. The internship not only enhanced his technical skills but also solidified his desire to work in the tech industry.
+
+As the academic year came to a close, Aarav reflected on his journey. He had grown immensely, both personally and professionally. He had learned to embrace his identity as an Indian student in America, finding strength in his heritage while also adapting to a new culture. He had formed lasting friendships, developed a network of support, and gained valuable experience in his field.
+
+Aarav stood on the campus lawn one sunny afternoon, watching the cherry blossoms bloom. He felt a sense of belonging that he hadn’t experienced before. The challenges he faced had shaped him into a more resilient and confident individual. He was no longer just a student from India; he was Aarav, a global citizen ready to take on the world.
+
+With a smile on his face, he took a deep breath, ready for whatever came next.
+----------
+    \end{tcolorbox}
+
+    \question[10] What did you observe from Q1 - Q3? Did the different ``top\_p" configurations give you the same or different results? Why?
+    
+    \begin{tcolorbox}[fit, height=6cm, width=16cm, blank, borderline={1pt}{-2pt}, nobeforeafter, breakable]
+    The different top\_p configurations in Q1 to Q3 have produced varying levels of response diversity. In Q1, with top\_p=1, all possible token choices were considered, allowing for more randomness in the responses. In Q3, with top\_p=0.5, only the top 50 percent of probable tokens were chosen, leading to more focused and deterministic outputs. This difference arises because top\_p controls how much of the token probability distribution is considered when generating text—lower values like 0.5 restrict diversity, while higher values like 1 allow more variation, influencing the creativity and uniqueness of the generated stories.
+\end{tcolorbox}
+
+
+\clearpage
+
+\subsection*{Task 2: gpt-4o-mini for Solving Mathematical Problems}
+
+    \question[5] You are presented a mathematical problem: \textit{Melanie is a door-to-door saleswoman. She sold a third of her vacuum cleaners at the green house, 2 more to the red house, and half of what was left at the orange house. If Melanie has 5 vacuum cleaners left, how many did she start with?}
+    Can you use the ChatCompletion function and prompt gpt-4o-mini to work out the problem?
+    
+    \begin{tcolorbox}[fit,height=16.5cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    Response:  Let \( x \) be the total number of vacuum cleaners Melanie started with.
+
+1. She sold a third of her vacuum cleaners at the green house:
+   \[
+   \text{Vacuum cleaners sold at green house} = \frac{x}{3}
+   \]
+   
+   After selling at the green house, the number of vacuum cleaners left is:
+   \[
+   x - \frac{x}{3} = \frac{2x}{3}
+   \]
+
+2. She sold 2 vacuum cleaners at the red house:
+   \[
+   \text{Vacuum cleaners left after red house} = \frac{2x}{3} - 2
+   \]
+
+3. Then she sold half of what was left at the orange house:
+   \[
+   \text{Vacuum cleaners sold at orange house} = \frac{1}{2} \left(\frac{2x}{3} - 2\right)
+   \]
+
+   The number of vacuum cleaners left after selling at the orange house is:
+   \[
+   \left(\frac{2x}{3} - 2\right) - \frac{1}{2} \left(\frac{2x}{3} - 2\right)
+   \]
+
+   Let's simplify that:
+   \[
+   \text{Remaining} = \left(\frac{2x}{3} - 2\right) - \frac{1}{2} \left(\frac{2x}{3} - 2\right)
+   \]
+   This can be rewritten as:
+   \[
+   \text{Remaining} = \left(\frac{2x}{3} - 2\right) - \frac{1}{2} \times \frac{2x - 6}{3} = \left(\frac{2x}{3} - 2\right) - \frac{2x - 6}{6}
+   \]
+
+   To combine these, we can find a common denominator, which is 6:
+   \[
+   \text{Remaining} = \frac{4x - 12}{6} - \frac{2x - 6}{6} = \frac{4x - 12 - 2x + 6}{6} = \frac{2x - 6}{6}
+   \]
+
+   Thus, after the orange house, she has:
+   \[
+   \frac{2x - 6}{6}
+   \]
+
+4. We know that after all her sales, Melanie has 5 vacuum cleaners left:
+   \[
+   \frac{2x - 6}{6} = 5
+   \]
+
+   To solve for \( x \), we multiply both sides by 6:
+   \[
+   2x - 6 = 30
+   \]
+   Adding 6 to both sides gives:
+   \[
+   2x = 36
+   \]
+   Dividing both sides by 2 gives:
+   \[
+   x = 18
+   \]
+
+Thus, the total number of vacuum cleaners Melanie started with is \( \boxed{18} \).
+    \end{tcolorbox}
+
+    Did gpt-4o-mini solve the problem correctly?  If not, where did it go wrong?
+
+    \begin{tcolorbox}[fit,height=2cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    Yes, it solved the problem correctly!
+    \end{tcolorbox}
+
+    %%%%%%%%
+    \question[10] Now, try to get 10 solutions from gpt-4o-mini with "top\_p" set to 0.7. 
+    You may see multiple different answers produced by gpt-4o-mini. Summarize them in the table below and give one example output from gpt-4o-mini each. Did gpt-4o-mini do right in all of the solutions? If there are any mistakes, what are the common errors that gpt-4o-mini makes?
+
+    \begin{tcolorbox}[fit,height=10cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter,breakable]
+    \resizebox{16cm}{!}{%
+    \begin{tabular}{|p{2cm}|p{2cm}|p{10cm}|}
+        \hline
+        Answer & Count & Example Output \\
+        \hline
+        Ans1 & 1 out of 10 & 18 \\\hline
+        Ans2 & 2 out of 10 & 18 \\\hline
+        Ans3 & 3 out of 10 & 18 \\
+        \hline
+    \end{tabular}
+    }\\
+
+    The solutions have consistently resulted in Melanie starting with 18 vacuum cleaners in all 10 responses. The reasoning and calculations in each response, despite varying presentations, lead to the same conclusion.
+
+    \end{tcolorbox}
+    %%%%%%%%%%%%
+
+    
+    \clearpage
+    \question[10] Can you try other ways to prompt gpt-4o-mini to give correct solutions more stably? Be creative! Include your prompt design and the answer in the report. Why do you think it works or not?
+
+    \begin{tcolorbox}[fit,height=22cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter,breakable]
+    \textbf{Prompt:}\\
+    You are tasked with solving two mathematical problems step by step. Please ensure you provide detailed calculations and arrive at a final answer for each problem. 
+    
+    Problem 1:
+    Melanie is a door-to-door saleswoman. She sold a third of her vacuum cleaners at the green house, 2 more to the red house, and half of what was left at the orange house. If Melanie has 5 vacuum cleaners left, how many did she start with?
+
+    Problem 2:
+    John drives for 3 hours at a speed of 60 mph and then turns around because he realizes he forgot something very important at home. He tries to get home in 4 hours but spends the first 2 hours in standstill traffic. He spends the next half-hour driving at a speed of 30mph, before being able to drive the remaining time of the 4 hours going at 80 mph. How far is he from home at the end of those 4 hours?
+
+    Please provide clear calculations for both problems and the final answers.
+    \\\\
+    \textbf{Output:}\\
+    Response:  Let’s solve each of the problems step by step.
+
+### Problem 1:
+Melanie's sales can be broken down as follows:
+
+Let \( x \) represent the number of vacuum cleaners Melanie started with.
+
+1. **Sales at the green house**: She sold a third of her vacuum cleaners at the green house.
+   \[
+   \text{Vacuum cleaners sold at green house} = \frac{1}{3}x
+   \]
+   Remaining vacuum cleaners after green house:
+   \[
+   x - \frac{1}{3}x = \frac{2}{3}x
+   \]
+
+2. **Sales at the red house**: She sold 2 more at the red house.
+   \[
+   \text{Remaining after red house} = \frac{2}{3}x - 2
+   \]
+
+3. **Sales at the orange house**: She sold half of what was left at the orange house.
+   \[
+   \text{Vacuum cleaners sold at orange house} = \frac{1}{2}\left(\frac{2}{3}x - 2\right)
+   \]
+   Remaining vacuum cleaners after orange house:
+   \[
+   \left(\frac{2}{3}x - 2\right) - \frac{1}{2}\left(\frac{2}{3}x - 2\right)
+   \]
+
+   To simplify this:
+   Substitute \( y = \frac{2}{3}x - 2 \):
+   \[
+   \text{Remaining} = y - \frac{1}{2}y = \frac{1}{2}y
+   \]
+   Therefore:
+   \[
+   \frac{1}{2}\left(\frac{2}{3}x - 2\right) = 5
+   \]
+   Now, solving for \( x \):
+   \[
+   \frac{2}{3}x - 2 = 10
+   \]
+   \[
+   \frac{2}{3}x = 10 + 2
+   \]
+   \[
+   \frac{2}{3}x = 12
+   \]
+   \[
+   x = 12 \cdot \frac{3}{2} = 18
+   \]
+
+**Final Answer for Problem 1:**
+Melanie started with **18 vacuum cleaners**.
+
+---
+
+### Problem 2:
+John's journey can be detailed in several parts:
+
+1. **Driving to a point**: 
+   - Speed = 60 mph
+   - Time = 3 hours
+   - Distance = Speed × Time
+   \[
+   \text{Distance driven away from home} = 60 \text{ mph} \times 3 \text{ hours} = 180 \text{ miles}
+   \]
+
+2. **The return trip**: 
+   - Travels for 4 hours but is affected by traffic.
+   - He spends the first 2 hours in standstill traffic (0 miles).
+   - During the next half-hour, he drives at 30 mph.
+   \[
+   \text{Distance covered in half an hour} = 30 \text{ mph} \times 0.5 \text{ hours} = 15 \text{ miles}
+   \]
+
+3. **Remaining time**: After 2.5 hours (2 hours of traffic + 0.5 hours of slow driving), he has \( 4 - 2.5 = 1.5 \) hours left to drive.
+   - In this time, he drives at 80 mph.
+   - Distance covered in 1.5 hours:
+   \[
+   \text{Distance covered} = 80 \text{ mph} \times 1.5 \text{ hours} = 120 \text{ miles}
+   \]
+
+4. **Total distance back home**: Adding the distances covered:
+   \[
+   \text{Total distance returned} = 15 \text{ miles (slow driving)} + 120 \text{ miles (fast driving)} = 135 \text{ miles}
+   \]
+
+5. **Distance from home**: 
+   - Initially, John was 180 miles away from home.
+   - After returning a total of 135 miles, he is:
+   \[
+   \text{Distance from home} = 180 \text{ miles} - 135 \text{ miles} = 45 \text{ miles}
+   \]
+
+**Final Answer for Problem 2:**
+John is **45 miles from home** at the end of the 4 hours.
+    \\\\
+    \textbf{Findings:} This prompt design works well due to its clarity, structured approach, and encouragement for detailed explanations, fostering better problem-solving performance from the model.
+    \end{tcolorbox}
+    
+    
+
+\clearpage\section*{Part 2: Build an LLM Agent with Gentopia [50 pts + 20 bonus pts]}
+
+In this part, we will switch to an extended topic called ``LLM agents''. In Part 1, we have mainly used gpt-4o-mini as a question-answer system, but an LLM can be formulated to be a ``vivid'' agent who learns to use tools and helps us in broader tasks, just like a virtual assistant!
+
+To this end, we will be using an open-source LLM agent implementation framework, called ``Gentopia''~\cite{xu2023gentopia}. The original code repository can be found at \url{https://github.com/Gentopia-AI}, \textbf{but note that for this assignment, we will use this adapted ``Gentopia-Mason'' version at \url{https://github.com/LittleYUYU/Gentopia-Mason/tree/main}}.
+
+
+\bigskip
+\subsection*{Prerequsite: Library Installation}
+As the first step, please make sure to install all required Python packages following the instructions on README. More specifically, it means to run the following lines of code:
+\begin{lstlisting}
+# Clone the repository
+git clone git@github.com:LittleYUYU/Gentopia-Mason.git
+cd Gentopia-Mason
+
+# Create a conda virtual environment
+conda create --name gentenv python=3.10
+conda activate gentenv
+pip install -r requirements.txt
+
+# Set up global environment
+export PYTHONPATH="$PWD/Gentopia:$PYTHONPATH"
+
+# Set up OpenAI API key
+cd GentPool
+touch .env
+echo "OPENAI_API_KEY=<your_openai_api_key>" >> .env
+\end{lstlisting} 
+
+\bigskip
+\subsection*{Task 3: Build a Vanilla LLM Agent}
+In this task, you will follow the instructions at \url{https://github.com/LittleYUYU/Gentopia-Mason/tree/main?tab=readme-ov-file#quick-start-clone-a-vanilla-llm-agent} to create a vanilla LLM agent. This agent is essentially the same question-answer model you have tried in Part 1.
+
+The agent, under the framework of Gentopia, is configured as follows (with annotations):
+\begin{lstlisting}
+# ./GentPool/gentpool/pool/<your_agent_name>/agent.yaml
+# Vanilla agent template
+
+name: <your_agent_name>
+version: 0.0.1
+type: vanilla
+description: A plain gpt-4 LLM. # this is a brief description of the agent
+target_tasks:
+  - anything to do with an LLM
+llm:
+  model_name: gpt-4 # indicating the API version
+  params:
+    temperature: 0.0 # both temperature and top_p are used to control the sampling diversity
+    top_p: 0.9
+    repetition_penalty: 1.0 # this is for preventing repetitive tokens
+    max_tokens: 1024 # maximum generation length
+prompt_template: !prompt VanillaPrompt # this is prompt we used for this agent, see ./Gentopia/gentopia/prompt/vanilla.py
+\end{lstlisting}
+
+    \question[10] \textbf{Change the "model\_name" field from "gpt-4" to "gpt-4o-mini".} Successfully run this agent, and copy its responses for the following conversations below:
+    
+    \begin{tcolorbox}[fit,height=3cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    \textbf{User:} Hi! Tell me something about George Mason NLP group!
+    \\
+    \textbf{priyallm:} \textit{The George Mason NLP (Natural Language Processing) group is a research group based at George Mason University. The group focuses on the study and development of NLP, which is a field of artificial intelligence that involves the interaction between computers and human language. They work on various aspects of NLP such as text mining, machine learning, information extraction, and sentiment analysis. The group is composed of faculty members, graduate students, and undergraduate students who collaborate on various research projects. }
+    \\
+    \textbf{User:} Who is/are leading the group?
+    \\
+    \textbf{priyallm:} \textit{ Without context, it's impossible to provide a specific answer to this question. The leader(s) of a group could be anyone from a CEO of a company, a team captain in sports, a director of a choir, a head of a family, etc. Please provide more details.}
+    \end{tcolorbox} 
+
+    What problems did you see from the second response? 
+    
+    \begin{tcolorbox}[fit,height=2cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    We need to provide some context (information) about the NLP group to get details about who's leading and so on. Without that, the LLM won't be able to identify what we're looking for as recent bits of data are unknown to the LLM.
+    \end{tcolorbox} 
+
+    \question[10] Now, let's do a trick here. Instead of asking two questions, let's ask a combined one. And similarly let's also try the second question asking about facts:
+
+    \begin{tcolorbox}[fit,height=10cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    \textbf{User:} Who is/are leading George Mason NLP group?
+    \\
+    \textbf{priyallm:} \textit{The George Mason NLP (Natural Language Processing) group is a research group based at George Mason University. The group focuses on research in the field of natural language processing, which involves the interaction between computers and human language. They work on various aspects of NLP including information extraction, text mining, social media analysis, and more. The group is led by Dr. Amarda Shehu and Dr. Huzefa Rangwala. Dr. Shehu is a Professor in the Department of Computer Science and Bioengineering, and her research interests include computational structural biology, bioinformatics, and biophysics. Dr. Rangwala is an Associate Professor in the Department of Computer Science, and his research interests include data mining, bioinformatics, and machine learning.}
+    \\
+    \textbf{User:} Find papers written by Ziyu Yao at George Mason University
+    \\
+    \textbf{priyallm:} 
+    \begin{enumerate}[label=\arabic*.]
+    \item \textit{A Survey on Knowledge Graphs: Representation, Acquisition and Applications} - Ziyu Yao, Jingrui He, Hanghang Tong, Meng Jiang. Published in 2020.
+    \item \textit{Graph Few-shot Learning via Knowledge Transfer} - Ziyu Yao, Yiqi Wang, Muhao Chen, Kai-Wei Chang, Carlo Zaniolo, Yizhou Sun. Published in 2020.
+    \item \textit{Graph Neural Networks: A Review of Methods and Applications} - Jie Zhou, Ganqu Cui, Zhengyan Zhang, Cheng Yang, Zhiyuan Liu, Lifeng Wang, Changcheng Li, Maosong Sun. Published in 2019.
+    \item \textit{Graph Neural Networks: Taxonomy, Advances and Trends} - Ziyu Yao, Yiqi Wang, Muhao Chen, Kai-Wei Chang, Carlo Zaniolo, Yizhou Sun. Published in 2020.
+    \item \textit{Learning from Multi-View Multi-Way Data via Structural Factorization Machines} - Ziyu Yao, Yiqi Wang, Muhao Chen, Kai-Wei Chang, Carlo Zaniolo, Yizhou Sun. Published in 2019.
+    \item \textit{Zero-shot Learning via Class-conditioned Deep Generative Models} - Ziyu Yao, Yiqi Wang, Muhao Chen, Kai-Wei Chang, Carlo Zaniolo, Yizhou Sun. Published in 2019.
+\end{enumerate}
+
+\textit{Please note that the affiliation to George Mason University might not be accurate for all papers as researchers often move institutions. It's always a good idea to check the individual paper for the correct affiliation.}
+    \end{tcolorbox} 
+
+    How do the responses look now? (Hint: you may want to verify the agent output.) Why would this situation happen? Describe your observations and findings below:
+    
+    \begin{tcolorbox}[fit,height=2cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    The responses are not accurate, some papers given in the responses aren't authored by Ziyu Yao. Also, the responses are for data as updated as 2020 only. Not till 2024 (the current year).
+    \end{tcolorbox} 
+
+    Till now, you probably have realized that an LLM alone will be facing various problems, including not being able to access the latest knowledge. Therefore, we'd like to try something called ``tool-augmented LLM agent'', where an LLM agent can be equipped with external tools for tasks. This is what we will do in Task 4!
+
+    
+    \clearpage\subsection*{Task 4: Build a \emph{Tool-Augmented} LLM Agent}
+
+    Now, we will follow the instructions at \url{https://github.com/LittleYUYU/Gentopia-Mason/tree/main?tab=readme-ov-file#implement-a-scholar-llm-agent-with-tool-augmentation} and create a tool-augmented LLM agent. 
+    In particular, this agent, called a ``scholar agent'', has been equipped with tools to access Google Scholar.\footnote{\url{https://scholar.google.com/}} 
+    
+    This tool use does not come for free; it relies on Python implementation using the ``scholarly'' library,\footnote{\url{https://pypi.org/project/scholarly/}} which can be found within the gentopia source code at \url{https://github.com/LittleYUYU/Gentopia-Mason/blob/main/Gentopia/gentopia/tools/google_scholar.py}.
+
+    Again, \textbf{change the "model\_name" field to "gpt-4o-mini".}
+    
+    \question[10] Now, let's the same query for Prof. Ziyu Yao's papers again:
+
+    \begin{tcolorbox}[fit,height=6cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    \textbf{User:} Find papers written by Ziyu Yao at George Mason University
+    \\
+    \textbf{priyallm2:} 
+    \begin{enumerate}[label=\arabic*.]
+    \item \textit{Navigating the Shortcut Maze: A Comprehensive Analysis of Shortcut Learning in Text Classification by Language Models} published in arXiv preprint arXiv:2409.17455, 2024. [Citations: 0]
+    \item \textit{A practical review of mechanistic interpretability for transformer-based language models} published in arXiv preprint arXiv:2407.02646, 2024. [Citations: 1]
+    \item \textit{An Investigation of Neuron Activation as a Unified Lens to Explain Chain-of-Thought Eliciting Arithmetic Reasoning of LLMs} published in ACL 2024, 2024. [Citations: 1]
+    \item \textit{Look Further Ahead: Testing the Limits of GPT-4 in Path Planning} published in IEEE CASE 2024, 2024. [Citations: 0]
+    \item \textit{MathVC: An LLM-Simulated Multi-Character Virtual Classroom for Mathematics Education} published in arXiv preprint arXiv:2404.06711, 2024. [Citations: 8]
+\end{enumerate}
+    \end{tcolorbox} 
+
+    Does the response look reasonable now? Based on the meta information that popped out through the agent's responding process, can you describe how the agent made it right this time?
+
+    \begin{tcolorbox}[fit,height=2cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    Yes. The agent cunningly looks about the author first, then his google scholar uid and using the uid, it finds the papers.
+    \end{tcolorbox}
+
+    \question[5] Look at the configuration file of your scholar agent at \url{./GentPool/gentpool/pool/<your_agent_name>/agent.yaml} and see what other functions are supported. Try a few other things you found interesting!
+    Some examples to consider: \textit{Can you summarize the paper titled "Gentopia: A collaborative platform for tool-augmented llms"?}, \textit{What papers have cited "Gentopia: A collaborative platform for tool-augmented llms"}, etc.
+    
+    \begin{tcolorbox}[fit,height=4cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    \textbf{User:} \textit{Summarize the paper "CoaCor: Code Annotation for Code Retrieval with Reinforcement Learning" by Ziyu Yao briefly.}
+    \\
+    \textbf{priyallm2:} \textit{The paper "CoaCor: Code Annotation for Code Retrieval with Reinforcement Learning" by Ziyu Yao, JR Peddamail, and H Sun, published in 2019 at The World Wide Web Conference, explores the intersection of two important tasks in software development: code retrieval and code annotation. Code retrieval aims to find relevant code snippets based on a given natural language query from a code base, while code annotation's goal is to provide a natural language description for a code snippet. The paper investigates the potential of combining these two tasks, which have mostly been studied separately. The paper has been cited 117 times. For more detailed information, you can access the paper here.}
+    \end{tcolorbox} 
+
+    \clearpage
+    \question[15] You may have realized that the current scholar agent still fails to answer general questions such as ``Tell me something about George Mason NLP group'', though they are also relevant to ``scholar''. In addition, it cannot read PDFs for summarizing papers either, so it cannot provide answers to specific questions about the paper details. Can you figure out a way for the agent to do Google Search (5 pts) and PDF reading (10 pts), and present a few examples below? (Hint: Google Search has been provided in Gentopia's source code, whereas you could opt for any Python tools you like, e.g., PyPDF2,\footnote{\url{https://www.geeksforgeeks.org/working-with-pdf-files-in-python/}} for PDF reading.)
+
+    \begin{tcolorbox}[fit,height=14cm, width=16cm, blank, borderline={1pt}{-2pt},nobeforeafter]
+    \textbf{User:} \textit{Tell me something about George Mason NLP group. Use Google Search if necessary!}
+    \\
+    \textbf{priyallm2:} \textit{The NLP group at George Mason University's Computer Science department is interested in all aspects of Natural Language Processing (NLP). They particularly focus on building tools for under-served languages. The group is co-led by Assistant Professor Ziyu Yao. Other notable members include Dr. Antonios Anastasopoulos, Dr. Marcos Zampieri, Dr. Kevin Lybarger, and Dr. Ozlem Uzuner. Their research includes various aspects of NLP, including the detection of depression symptoms from social media texts. You can find more about their work and contributions on their official website here.}
+
+    \textbf{User:} \textit{Read the pdf from https://pdfobject.com/pdf/sample.pdf}
+    \\
+    \textbf{priyallm2:} \textit{Sample PDF This is a simple PDF file. Fun fun fun. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus facilisis odio sed mi. Curabitur suscipit. Nullam vel nisi. Etiam semper ipsum ut lectus. Proin aliquam, erat eget pharetra commodo, eros mi condimentum quam, sed commodo justo quam ut velit. Integer a erat. Cras laoreet ligula cursus enim. Aenean scelerisque velit et tellus. Vestibulum dictum aliquet sem. Nulla facilisi. Vestibulum accumsan ante vitae elit. Nulla erat dolor, blandit in, rutrum quis, semper pulvinar, enim. Nullam varius congue risus. Vivamus sollicitudin, metus ut interdum eleifend, nisi tellus pellentesque elit, tristique accumsan eros quam et risus. Suspendisse libero odio, mattis sit amet, aliquet eget, hendrerit vel, nulla. Sed vitae augue. Aliquam erat volutpat. Aliquam feugiat vulputate nisl. Suspendisse quis nulla pretium ante pretium mollis. Proin velit ligula, sagittis at, egestas a, pulvinar quis, nisl. Pellentesque sit amet lectus. Praesent pulvinar, nunc quis iaculis sagittis, justo quam lobortis tortor, sed vestibulum dui metus venenatis est. Nunc cursus ligula. Nulla facilisi. Phasellus ullamcorper consectetuer ante. Duis tincidunt, urna id condimentum luctus, nibh ante vulputate sapien, id sagittis massa orci ut enim. Pellentesque vestibulum convallis sem. Nulla consequat quam ut nisl. Nullam est. Curabitur tincidunt dapibus lorem. Proin velit turpis, scelerisque sit amet, iaculis nec, rhoncus ac, ipsum. Phasellus lorem arcu, feugiat eu, gravida eu, consequat molestie, ipsum. Nullam vel est ut ipsum volutpat feugiat. Aenean pellentesque. In mauris. Pellentesque dui nisi, iaculis eu, rhoncus in, venenatis ac, ante. Ut odio justo, scelerisque vel, facilisis non, commodo a, pede. Cras nec massa sit amet tortor volutpat varius. Donec lacinia, neque a luctus aliquet, pede massa imperdiet ante, at varius lorem pede sed sapien. Fusce erat nibh, aliquet in, eleifend eget, commodo eget, erat. Fusce consectetuer. Cras risus tortor, porttitor nec, tristique sed, convallis semper, eros. Fusce vulputate ipsum a mauris. Phasellus mollis. Curabitur sed urna. Aliquam nec sapien non nibh pulvinar convallis. Vivamus facilisis augue quis quam. Proin cursus aliquet metus. Suspendisse lacinia. Nulla at tellus ac turpis eleifend scelerisque. Maecenas a pede vitae enim commodo interdum. Donec odio. Sed sollicitudin dui vitae justo. Morbi elit nunc, facilisis a, mollis a, molestie at, lectus. Suspendisse eget mauris eu tellus molestie cursus. Duis ut magna at justo dignissim condimentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus varius. Ut sit amet diam suscipit mauris ornare aliquam. Sed varius. Duis arcu. Etiam tristique massa eget dui. Phasellus congue. Aenean est erat, tincidunt eget, venenatis quis, commodo at, quam.}
+    \end{tcolorbox}
+    
+
+\end{questions}
+
+\bigskip
+\section*{Bonus: Build Your Own Agent! (20 pts)}
+
+We will provide up to 20 points to students who implement a different tool-augmented LLM agent \emph{for positive use (i.e., the agent cannot be designed for unethical purposes)}. To claim bonus points, the agent needs to be substantially different from the scholar agent and others included in Gentopia's agent pool. Be creative! Partial credits may be provided based on student effort.
+
+
+\bigskip
+\section*{Acknowledgment}
+The mathematical problems used in this assignment come from the GSM8k dataset~\cite{cobbe2021training}, and the source code of Gentopia comes from the referred EMNLP'23 paper~\cite{xu2023gentopia}.
+
+
+\bibliography{refs}
+\bibliographystyle{plain}
+
+
+\end{document}
